@@ -1,11 +1,13 @@
 // Your web app's Firebase configuration
 var firebaseConfig = {
-    apiKey: "AIzaSyDoxwgiLQwFUG_jAWOnWb7JlIiEO8mnEl8",
-    authDomain: "project-example-43b6c.firebaseapp.com",
-    databaseURL: "https://project-example-43b6c.firebaseio.com",
-    projectId: "project-example-43b6c",
-    storageBucket: "project-example-43b6c.appspot.com",
-    messagingSenderId: "200282003284",
+    apiKey: "AIzaSyAS4X10BXV0Okw_iDAd7kVrpfCKKjdgmJg",
+    authDomain: "train-scheduler-56b12.firebaseapp.com",
+    databaseURL: "https://train-scheduler-56b12.firebaseio.com",
+    projectId: "train-scheduler-56b12",
+    storageBucket: "train-scheduler-56b12.appspot.com",
+    messagingSenderId: "1092551141428",
+    appId: "1:1092551141428:web:09b329ac3e37a04e9d4261",
+    measurementId: "G-3HCLT5D340"
 };
 
 // Initialize Firebase
@@ -36,10 +38,10 @@ $("#add-train").on("click", function (event) {
     database.ref().push(newTrain);
 
     // Clear the form after values have been stored
-    $("#train-name").text(name);
-    $("#train-destination").text(destination);
-    $("#train-time").text(time);
-    $("#train-frequency").text(frequency);
+    $("#train-name").val("");
+    $("#train-destination").val("");
+    $("#train-time").val("");
+    $("#train-frequency").val("");
 });
 
 // Firebase watcher + initial loader HINT: .on("value")
@@ -48,6 +50,13 @@ database.ref().on("child_added", function (childSnapshot) {
     var trainDestination = childSnapshot.val().destination;
     var trainTime = childSnapshot.val().time;
     var trainFrequency = childSnapshot.val().frequency;
+
+    // Processing time schedule for each train
+    var trainTimeConverter = moment(trainTime, "hh:mm a").subtract(3, "years");
+    var timeDifference = moment().diff(moment(trainTimeConverter), "minutes");
+    var timeLeft = timeDifference % trainFrequency;
+    var minutesAway = trainFrequency - timeLeft;
+    var nextArrival = moment().add(minutesAway, "minutes").format("hh:mm a");
 
     // Add the data into the HTML
     $("#train-info > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDestination + "</td><td>" + trainFrequency + "</td><td>" + nextArrival + "</td><td>" + minutesAway + "</td></tr>");
