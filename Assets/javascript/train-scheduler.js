@@ -6,8 +6,6 @@ var firebaseConfig = {
     projectId: "project-example-43b6c",
     storageBucket: "project-example-43b6c.appspot.com",
     messagingSenderId: "200282003284",
-    appId: "1:200282003284:web:ae9131a3d11fadceb5dac1",
-    measurementId: "G-72F0ZMRP72"
 };
 
 // Initialize Firebase
@@ -17,37 +15,40 @@ firebase.initializeApp(firebaseConfig);
 var database = firebase.database();
 
 //on click function for the submit button
-$(".btn-submit").on("click", function (event) {
+$("#add-train").on("click", function (event) {
     event.preventDefault();
-    console.log("clicked");
-
-    // YOUR TASK!!!
 
     // Code in the logic for storing and retrieving the most recent user.
-    // Get inputs
-    var name = $("#train-name").val().trim();
-    var destination = $("#train-destination").val().trim();
-    var time = $("#train-time").val().trim();
-    var frequency = $("#train-frequency").val().trim();
-    // Don't forget to provide initial data to your Firebase database.
+    var trainName = $("#train-name").val().trim();
+    var trainDestination = $("#train-destination").val().trim();
+    var trainTime = $("#train-time").val().trim();
+    var trainFrequency = $("#train-frequency").val().trim()
 
     // Change what is saved in firebase
-    database.ref().set({
-        name: name,
-        destination: destination,
-        time: time,
-        frequency: frequency,
-    });
-    // Firebase watcher + initial loader HINT: .on("value")
-    database.ref().on("value", function (snapshot) {
-        var name = snapshot.val().name
-        var destination = snapshot.val().role
-        var time = snapshot.val().time
-        var frequency = snapshot.val().frequency
+    var newTrain = {
+        name: trainName,
+        destination: trainDestination,
+        time: trainTime,
+        frequency: trainFrequency,
+    }
 
-        $("#train-name").text(name);
-        $("#train-destination").text(destination);
-        $("#train-time").text(time);
-        $("#train-frequency").text(frequency);
-    });
+    // Don't forget to provide initial data to your Firebase database.
+    database.ref().push(newTrain);
+
+    // Clear the form after values have been stored
+    $("#train-name").text(name);
+    $("#train-destination").text(destination);
+    $("#train-time").text(time);
+    $("#train-frequency").text(frequency);
+});
+
+// Firebase watcher + initial loader HINT: .on("value")
+database.ref().on("child_added", function (childSnapshot) {
+    var trainName = childSnapshot.val().name;
+    var trainDestination = childSnapshot.val().destination;
+    var trainTime = childSnapshot.val().time;
+    var trainFrequency = childSnapshot.val().frequency;
+
+    // Add the data into the HTML
+    $("#train-info > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDestination + "</td><td>" + trainFrequency + "</td><td>" + nextArrival + "</td><td>" + minutesAway + "</td></tr>");
 });
