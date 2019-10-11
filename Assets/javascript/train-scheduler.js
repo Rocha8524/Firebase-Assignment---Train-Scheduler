@@ -13,7 +13,7 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-//create a variable to reference the database
+//Create a variable to reference the database
 var database = firebase.database();
 
 //on click function for the submit button
