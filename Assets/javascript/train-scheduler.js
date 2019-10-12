@@ -32,10 +32,16 @@ $("#add-train").on("click", function (event) {
         destination: trainDestination,
         time: trainTime,
         frequency: trainFrequency,
-    }
+    };
 
     // Don't forget to provide initial data to your Firebase database.
     database.ref().push(newTrain);
+
+    // Console log the values that were just pushed to the database
+    console.log(newTrain.trainName);
+    console.log(newTrain.trainDestination);
+    console.log(newTrain.trainTime);
+    console.log(newTrain.trainFrequency);
 
     // Clear the form after values have been stored
     $("#train-name").val("");
@@ -46,17 +52,21 @@ $("#add-train").on("click", function (event) {
 
 // Firebase watcher + initial loader HINT: .on("value")
 database.ref().on("child_added", function (childSnapshot) {
+    console.log(childSnapshot.val());
+
+    // Store snapshot variables
     var trainName = childSnapshot.val().name;
     var trainDestination = childSnapshot.val().destination;
     var trainTime = childSnapshot.val().time;
     var trainFrequency = childSnapshot.val().frequency;
 
     // Processing time schedule for each train
-    var trainTimeConverter = moment(trainTime, "hh:mm a").subtract(3, "years");
+    var trainTimeConverter = moment(trainTime, "hh:mm").subtract(1, "years");
     var timeDifference = moment().diff(moment(trainTimeConverter), "minutes");
     var timeLeft = timeDifference % trainFrequency;
     var minutesAway = trainFrequency - timeLeft;
-    var nextArrival = moment().add(minutesAway, "minutes").format("hh:mm a");
+    var nextArrival = moment().add(minutesAway, "minutes")
+    nextArrival = moment.format("hh:mm");
 
     // Add the data into the HTML
     $("#train-info > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDestination + "</td><td>" + trainFrequency + "</td><td>" + nextArrival + "</td><td>" + minutesAway + "</td></tr>");
