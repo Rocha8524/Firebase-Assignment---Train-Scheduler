@@ -56,12 +56,22 @@ $(document).ready(function () {
         var trainFrequency = childSnapshot.val().frequency;
 
         // Processing time schedule for each train
+        // First train time
         var trainTimeConverter = moment(trainTime, "hh:mm").subtract(1, "years");
+
+        // Current time variable
+        var currentTime = moment().format("hh:mm");
+        console.log("Current Time:" + currentTime);
+
+        // Variable for current time and first train time difference
         var timeDifference = moment().diff(moment(trainTimeConverter), "minutes");
         var timeLeft = timeDifference % trainFrequency;
+
+        // Minutes until next train arrives
         var minutesAway = trainFrequency - timeLeft;
-        var nextArrival = moment().add(minutesAway, "minutes")
-        nextArrival = moment.format("hh:mm");
+
+        // Next arriving train
+        var nextArrival = moment().add(minutesAway, "minutes").format("hh:mm");
 
         // Add the data into the HTML
         $("#train-info > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDestination + "</td><td>" + trainFrequency + "</td><td>" + nextArrival + "</td><td>" + minutesAway + "</td></tr>");
